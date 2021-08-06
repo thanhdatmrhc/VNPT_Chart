@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.Title = "Thống Kê";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string tt;
+    switch(@Model.TTVT.selected)
+    {
+        case "BLU050000":
+            tt = "Trung tâm Viễn Thông Bạc Liêu 1";
+            break;
+        case "BLU060000":
+            tt = "Trung tâm Viễn Thông Bạc Liêu 2";
+            break;
+        case "BLU070000":
+            tt = "Trung tâm Viễn Thông Bạc Liêu 3";
+            break;
+        case "BLU080000":
+            tt = "Trung tâm Viễn Thông Bạc Liêu 4";
+            break;
+        default:
+            tt = "Tất cả Trung tâm Viễn Thông";
+            break;
+    }
+}
+<h2> @tt </h2>
+<h2> @Model.LoaiDuLieu.loaiDuLieus[Model.LoaiDuLieu.selected] </h2>
+@using (Html.BeginForm("HandleRequestDataTypeTTVT", "DashBoard", FormMethod.Post))
+{
+    <select name="loaiDL">
+        <option value="@Model.LoaiDuLieu.selected">@Model.LoaiDuLieu.loaiDuLieus[Model.LoaiDuLieu.selected]</option>
+        @foreach (var item in Model.LoaiDuLieu.loaiDuLieus)
+        {
+            <option Value="@item.Key"> @item.Value </option>
+        }
+    </select>
+    <select name="ttvt">
+        <option value="*">Tất cả</option>
+        @foreach (var item in Model.TTVT.ttvts)
+        {
+            <option Value="@item.maTTVT">@item.tenTTVT</option>
+        }
+    </select>
+    <input type="submit" value="Apply" />
+}
+<div>
+    <canvas id="myChart"></canvas>
+</div>
+@*<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>*@
+<script src="../Scripts/Chart.js"></script>
+<script>
+    const data = @Html.Raw(Json.Encode(Model.LineChartData));
+    console.log(data);
+    // <block:config:0>
+    const config = {
+        type: 'line',
+        data,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Tháng - Năm',
+                        color: '#2c7fb8',
+                        font: {
+                            family: 'Times',
+                            size: 20,
+                            weight: 'bold',
+                            lineHeight: 1.2,
+                        },
+                        padding: { top: 20, left: 0, right: 0, bottom: 0 }
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Số lượng / Tỷ lệ (%)',
+                        color: '#2c7fb8',
+                        font: {
+                            family: 'Times',
+                            size: 20,
+                            weight:'bold',
+                            style: 'normal',
+                            lineHeight: 1.2
+                        },
+                        padding: { top: 30, left: 0, right: 0, bottom: 0 }
+                    }
+                }
+            },
+            bezierCurve: true
+        }
+    };
+    // </block:config>
+    module.exports = {
+        actions: [],
+        config: config,
+    };
+</script>
+<script>
+    // === include 'setup' then 'config' above ===
+    var myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+    );
+</script>
